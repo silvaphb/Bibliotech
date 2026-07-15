@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .entities import BookEntity
+from livraria.domain.entities import BookEntity
 
 class IBookRepository(ABC):
     @abstractmethod

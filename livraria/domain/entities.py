@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class BookEntity:
-    id: int = field(default=0)
+    id: int | None = field(default=None)
     title: str = field(default='')
     author: str = field(default='')
     description: str = field(default='')

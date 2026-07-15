@@ -1,6 +1,6 @@
 from typing import Optional
 from ninja import Schema
-from .application.dtos import BookInDTO
+from livraria.application.dtos import BookInDTO
 
 class BookIn(Schema):
     title: str

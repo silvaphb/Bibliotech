@@ -1,5 +1,5 @@
-from .repositories import IBookRepository
-from .entities import BookEntity
+from livraria.domain.repositories import IBookRepository
+from livraria.domain.entities import BookEntity
 
 from typing import List
 
@@ -7,7 +7,7 @@ from .models import Book
 
 class BookRepository(IBookRepository):
     def save(self, book: BookEntity) -> BookEntity:
-        Book.objects.update_or_create(
+        obj, _ = Book.objects.update_or_create(
             id=book.id,
             defaults={
                 'title': book.title,
@@ -18,8 +18,8 @@ class BookRepository(IBookRepository):
                 'stock': book.stock
             }
         )
-        return book
-    
+        return self._to_model(obj)
+
     def verify_exists(self, title: str) -> bool:
         return Book.objects.filter(title=title).exists()
     
@@ -31,10 +31,13 @@ class BookRepository(IBookRepository):
        return False
 
     def get_unique(self, id: int) -> BookEntity | None:
-        book = Book.objects.get(id=id)
-        if not book:
+        try:
+            book = Book.objects.get(id=id)
+            if not book:
+                return None
+            return self._to_model(book)
+        except Book.DoesNotExist:
             return None
-        return self._to_model(book)
 
     def search_all(self) -> List[BookEntity]:
         books = Book.objects.all()
@@ -43,9 +46,9 @@ class BookRepository(IBookRepository):
     def delete(self, id: int) -> None:
         try:
             Book.objects.get(id=id).delete()
-            return None
+            return True
         except Book.DoesNotExist:
-            return None
+            return False
     
     def _to_model(self, book) -> BookEntity:
         return BookEntity(
